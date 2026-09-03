@@ -14,14 +14,16 @@ FUSE on Linux/macOS and Dokany on Windows. Two crates in one Cargo workspace:
 ## Build / lint / test
 
 ```sh
-cargo build --all-features
-cargo fmt --all -- --check
-cargo clippy -- -Dwarnings
-cargo test --no-fail-fast                                  # unit tests
-cargo test --features integration-tests --no-fail-fast     # + integration tests (real mount/unmount)
+just build "--all-features"
+just fmt_check
+just lint "-- -D warnings"
+just test "--no-fail-fast"                                  # workspace and documentation tests
+just test "--features integration-tests --no-fail-fast"     # + integration tests (real mount/unmount)
 ```
 
-Run a single test: `cargo test -p remotefs-fuse <test_name>`.
+Run a single test: `just test "-p remotefs-fuse <test_name>"`.
+
+Run the complete local quality gate with `just check`.
 
 Platform notes (mirrors `.github/workflows/ci.yml`):
 
@@ -30,7 +32,7 @@ Platform notes (mirrors `.github/workflows/ci.yml`):
   `--features integration-tests`.
 - **macOS**: needs `macfuse` (`brew install macfuse`). CI builds/tests with
   `--no-default-features` (no integration-tests feature — actual mounting isn't exercised in CI).
-- **Windows**: needs `dokany` (`choco install dokany`). CI runs `cargo build --all-features` then
+- **Windows**: needs `dokany` (`choco install dokany`). CI runs `just build "--all-features"` then
   the full test suite (integration tests included, no separate feature gate needed there).
 
 `remotefs-fuse-cli` pulls in one crate per backend behind a feature flag (`aws-s3`, `ftp`, `kube`,
