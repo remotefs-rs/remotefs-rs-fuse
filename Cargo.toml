@@ -28,7 +28,7 @@ path-slash = "0.2"
 pretty_assertions = "1"
 remotefs = "0.3"
 remotefs-aws-s3 = "0.4"
-remotefs-ftp = "0.2"
+remotefs-ftp = "0.4"
 remotefs-fuse = { version = "0.1", path = "crates/remotefs-fuse" }
 remotefs-kube = "0.4"
 remotefs-memory = "0.1"

@@ -22,12 +22,6 @@ ignore = [
   # rustls-pemfile is unmaintained and the advisory provides no safe upgrade;
   # it remains transitive through the pinned WebDAV and Kubernetes backends.
   { id = "RUSTSEC-2025-0134", reason = "no safe upgrade is available; transitive through pinned remotefs backends" },
-  # remotefs-ftp 0.2.x requires suppaftp 6.x. The fixed suppaftp release is
-  # not compatible with that backend version.
-  { id = "RUSTSEC-2026-0271", reason = "transitive suppaftp 6.x dependency through remotefs-ftp 0.2.x" },
-  # time 0.3.47 fixes this advisory but requires Rust 1.88; the workspace
-  # intentionally supports MSRV 1.85.
-  { id = "RUSTSEC-2026-0009", reason = "fixed time release requires Rust 1.88, above the workspace MSRV 1.85" },
 ]
 
 [licenses]
