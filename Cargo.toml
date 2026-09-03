@@ -37,9 +37,9 @@ remotefs-smb = { version = "0.5", default-features = false }
 remotefs-ssh = { version = "0.9", default-features = false }
 remotefs-webdav = "0.2"
 seahash = "4"
-serial_test = "3"
+serial_test = "4"
 tempfile = "3"
 thiserror = "2"
 tokio = "1"
-widestring = "0.4"
+widestring = "1"
 winapi = "0.3"
