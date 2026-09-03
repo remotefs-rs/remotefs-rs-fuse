@@ -23,7 +23,7 @@ cargo test --features integration-tests --no-fail-fast     # + integration tests
 
 Run a single test: `cargo test -p remotefs-fuse <test_name>`.
 
-Platform notes (mirrors `.github/workflows/{linux,macos,windows}.yml`):
+Platform notes (mirrors `.github/workflows/ci.yml`):
 
 - **Linux**: needs `fuse3`/`libfuse3-dev` (`sudo apt install fuse3 libfuse3-dev`) and
   `echo 'user_allow_other' | sudo tee -a /etc/fuse.conf` for integration tests. Runs with
@@ -41,7 +41,7 @@ Platform notes (mirrors `.github/workflows/{linux,macos,windows}.yml`):
 ### Unix vs. Windows split
 
 Nearly everything under `crates/remotefs-fuse/src/driver/` and `mount.rs` is `#[cfg(unix)]` /
-`#[cfg(windows)]` gated, implementing the *same* public API (`Mount`, `Driver<T>`) against two
+`#[cfg(windows)]` gated, implementing the _same_ public API (`Mount`, `Driver<T>`) against two
 unrelated backend crates:
 
 - **Unix** (`driver/unix.rs` + `driver/unix/{inode,file_handle}.rs`): implements `fuser::Filesystem`

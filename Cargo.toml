@@ -3,6 +3,7 @@ members = ["crates/remotefs-fuse", "crates/remotefs-fuse-cli"]
 resolver = "3"
 
 [workspace.package]
+version = "0.1.0"
 authors = ["Christian Visintin <christian.visintin@veeso.dev>"]
 categories = ["network-programming"]
 edition = "2024"
@@ -10,7 +11,6 @@ keywords = ["remote-fs", "fuse-driver", "fuse"]
 license = "MIT"
 repository = "https://github.com/remotefs-rs/remotefs-rs-fuse"
 rust-version = "1.85"
-version = "0.1.0"
 
 [workspace.dependencies]
 anyhow = "1"
@@ -20,7 +20,7 @@ dashmap = "6"
 dokan = "0.3.1"
 dokan-sys = "0.3.1"
 env_logger = "0.11"
-fuser = "0.15"
+fuser = "0.16"
 libc = "0.2"
 log = "0.4"
 nix = "0.29"
