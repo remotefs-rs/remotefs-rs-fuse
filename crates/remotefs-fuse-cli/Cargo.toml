@@ -1,0 +1,48 @@
+[package]
+name = "remotefs-fuse-cli"
+version = { workspace = true }
+authors = { workspace = true }
+categories = ["command-line-utilities", "network-programming"]
+documentation = "https://docs.rs/remotefs-fuse-cli"
+edition = { workspace = true }
+include = ["src/**/*", "../../LICENSE", "../../README.md", "../../CHANGELOG.md"]
+keywords = { workspace = true }
+license = { workspace = true }
+readme = "../../README.md"
+repository = { workspace = true }
+rust-version = { workspace = true }
+description = "A CLI to mount remote file systems locally via FUSE or Dokany"
+
+[features]
+aws-s3 = ["dep:remotefs-aws-s3"]
+default = ["aws-s3", "ftp", "kube", "smb", "ssh", "webdav"]
+ftp = ["dep:remotefs-ftp"]
+kube = ["dep:remotefs-kube"]
+smb = ["dep:remotefs-smb"]
+ssh = ["dep:remotefs-ssh"]
+webdav = ["dep:remotefs-webdav"]
+
+[dependencies]
+anyhow = { workspace = true }
+argh = { workspace = true }
+ctrlc = { workspace = true }
+env_logger = { workspace = true }
+log = { workspace = true }
+remotefs = { workspace = true }
+remotefs-aws-s3 = { workspace = true, optional = true }
+remotefs-ftp = { workspace = true, features = ["rustls"], optional = true }
+remotefs-fuse = { workspace = true }
+remotefs-kube = { workspace = true, optional = true }
+remotefs-memory = { workspace = true }
+remotefs-smb = { workspace = true, optional = true }
+remotefs-ssh = { workspace = true, optional = true }
+remotefs-webdav = { workspace = true, optional = true }
+thiserror = { workspace = true }
+tokio = { workspace = true, features = ["rt"] }
+
+[target.'cfg(unix)'.dependencies]
+nix = { workspace = true, features = ["user"] }
+
+[[bin]]
+name = "remotefs-fuse-cli"
+path = "src/main.rs"
