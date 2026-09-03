@@ -28,10 +28,16 @@ if ! git diff --cached --quiet --diff-filter=ACMR --; then
     trap cleanup EXIT
     git checkout-index --all --prefix="$index_tree/"
 
-    echo "pre-commit: checking staged-tree code"
+    echo "pre-commit: checking staged-tree code formatting"
     (
         cd "$index_tree"
-        just check
+        just fmt_check
+    )
+
+    echo "pre-commit: checking deny"
+    (
+        cd "$index_tree"
+        just deny
     )
 
 fi
