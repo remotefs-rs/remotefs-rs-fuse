@@ -10,4 +10,5 @@ publish_cli args="":
 
 # Publish both crates in dependency order.
 [group('publish')]
-publish args="": (publish_lib args) (publish_cli args)
+publish args="":
+  cargo publish --locked {{ args }}
