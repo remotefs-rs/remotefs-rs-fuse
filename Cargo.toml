@@ -17,6 +17,7 @@ anyhow = "1"
 argh = "0.1"
 ctrlc = "3"
 dashmap = "6"
+dirs = "6"
 dokan = "0.3"
 dokan-sys = "0.3"
 env_logger = "0.11"
@@ -33,7 +34,7 @@ remotefs-fuse = { version = "0.1", path = "crates/remotefs-fuse" }
 remotefs-kube = "0.4"
 remotefs-memory = "0.1"
 remotefs-smb = { version = "0.5", default-features = false }
-remotefs-ssh = "0.5"
+remotefs-ssh = { version = "0.9", default-features = false }
 remotefs-webdav = "0.2"
 seahash = "4"
 serial_test = "3"
