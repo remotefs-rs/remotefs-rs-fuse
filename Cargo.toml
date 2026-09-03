@@ -10,7 +10,7 @@ edition = "2024"
 keywords = ["remote-fs", "fuse-driver", "fuse"]
 license = "MIT"
 repository = "https://github.com/remotefs-rs/remotefs-rs-fuse"
-rust-version = "1.85"
+rust-version = "1.94.1"
 
 [workspace.dependencies]
 anyhow = "1"
@@ -27,7 +27,7 @@ nix = "0.29"
 path-slash = "0.2"
 pretty_assertions = "1"
 remotefs = "0.3"
-remotefs-aws-s3 = "0.3"
+remotefs-aws-s3 = "0.4"
 remotefs-ftp = "0.2"
 remotefs-fuse = { version = "0.1", path = "crates/remotefs-fuse" }
 remotefs-kube = "0.4"
