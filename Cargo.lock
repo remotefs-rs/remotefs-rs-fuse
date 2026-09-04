@@ -1703,6 +1703,32 @@ dependencies = [
 ]
 
 [[package]]
+name = "fusibile"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "argh",
+ "ctrlc",
+ "dirs",
+ "env_logger",
+ "log",
+ "nix",
+ "remotefs",
+ "remotefs-aws-s3",
+ "remotefs-ftp",
+ "remotefs-fuse",
+ "remotefs-gcs",
+ "remotefs-kube",
+ "remotefs-memory",
+ "remotefs-smb",
+ "remotefs-ssh",
+ "remotefs-webdav",
+ "serde_json",
+ "thiserror 2.0.20",
+ "tokio",
+]
+
+[[package]]
 name = "futures"
 version = "0.3.34"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4131,32 +4157,6 @@ dependencies = [
  "tempfile",
  "widestring",
  "winapi",
-]
-
-[[package]]
-name = "remotefs-fuse-cli"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "argh",
- "ctrlc",
- "dirs",
- "env_logger",
- "log",
- "nix",
- "remotefs",
- "remotefs-aws-s3",
- "remotefs-ftp",
- "remotefs-fuse",
- "remotefs-gcs",
- "remotefs-kube",
- "remotefs-memory",
- "remotefs-smb",
- "remotefs-ssh",
- "remotefs-webdav",
- "serde_json",
- "thiserror 2.0.20",
- "tokio",
 ]
 
 [[package]]
