@@ -1,3 +1,3 @@
 [group('run')]
 run args="":
-  cargo run --all-features --locked -- {{ args }}
+  cargo run --features {{ all_features }} --locked -p fusibile -- {{ args }}
