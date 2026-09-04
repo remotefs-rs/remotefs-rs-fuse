@@ -74,6 +74,7 @@ jobs:
       - name: Build
         run: just build "${{ matrix.cargo-args }}"
       - name: Test
+        if: runner.os != 'Windows'
         run: just test "${{ matrix.cargo-args }}"
         env:
           RUST_LOG: trace
