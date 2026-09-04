@@ -9,7 +9,8 @@ implementation (SFTP/SCP, FTP, AWS S3, SMB, WebDAV, Kube, in-memory, ...) as a l
 FUSE on Linux/macOS and Dokany on Windows. Two crates in one Cargo workspace:
 
 - `remotefs-fuse` — the library (`Mount`, `MountOption`, `Driver`).
-- `remotefs-fuse-cli` — a CLI binary that wires a chosen remotefs backend into `remotefs-fuse`.
+- `fusibile` — a CLI binary (package `fusibile`, crate dir `crates/fusibile`) that wires a chosen
+  remotefs backend into `remotefs-fuse`.
 
 ## Build / lint / test
 
@@ -35,7 +36,7 @@ Platform notes (mirrors `.github/workflows/ci.yml`):
 - **Windows**: needs `dokany` (`choco install dokany`). CI runs `just build "--all-features"` then
   the full test suite (integration tests included, no separate feature gate needed there).
 
-`remotefs-fuse-cli` pulls in one crate per backend behind a feature flag (`aws-s3`, `ftp`, `kube`,
+`fusibile` pulls in one crate per backend behind a feature flag (`aws-s3`, `ftp`, `kube`,
 `smb`, `ssh`, `webdav`), all on by default; use `--no-default-features --features <subset>` to trim.
 
 ## Architecture
@@ -65,7 +66,7 @@ since they don't share an implementation, only the same conceptual FS operations
 `Mount::run()` (Windows — `dokan::FileSystemMounter::mount()`). `Mount::run()` blocks the calling
 thread running the FS event loop. `Mount::unmounter()` returns an `Unmount` handle that can be moved
 into a signal handler (see `ctrlc` usage in both the crate docs example and
-`crates/remotefs-fuse-cli/src/main.rs`) to unmount from another thread/signal context.
+`crates/fusibile/src/main.rs`) to unmount from another thread/signal context.
 
 On Windows the "mountpoint" is conventionally a drive letter (e.g. `Z`), not a filesystem path.
 
@@ -80,7 +81,7 @@ exists because the local user's UID often won't match the UID owning files on th
 (e.g. logging into SFTP as a different user than the local user), which otherwise blocks local
 access to files the remote credentials are actually entitled to.
 
-### CLI (`remotefs-fuse-cli`)
+### CLI (`fusibile`)
 
 `src/cli.rs` defines the `argh`-based arg parser and a `CliArgs::remote()` that dispatches to one of
 `src/cli/{aws_s3,ftp,kube,memory,smb,ssh,webdav}.rs` based on the chosen subcommand/feature, each

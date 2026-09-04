@@ -1,5 +1,8 @@
 [workspace]
-members = ["crates/remotefs-fuse", "crates/remotefs-fuse-cli"]
+members = [
+  "crates/fusibile",
+  "crates/remotefs-fuse",
+]
 resolver = "3"
 
 [workspace.package]
