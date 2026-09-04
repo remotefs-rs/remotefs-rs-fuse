@@ -24,3 +24,8 @@ bump_version version:
 [group('build')]
 test_bump_version:
   dist/release/test_bump_version.sh
+
+# Build a static musl Linux release binary in a pinned Alpine container.
+[group('build')]
+build_musl target:
+  dist/release/build_musl.sh {{ target }}
