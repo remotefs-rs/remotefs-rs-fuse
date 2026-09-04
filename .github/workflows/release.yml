@@ -130,11 +130,12 @@ jobs:
             kind: macos
             build-args: "--features smb-vendored"
           - target: x86_64-apple-darwin
-            os: macos-15-intel
+            os: macos-latest
             kind: macos
-            # smb-vendored fails to link on Intel macOS runners: pavao-src's vendored
-            # Samba build hits undefined libintl symbols building tdb. Ship without SMB
-            # on this target rather than the whole matrix entry; see the README note.
+            # Cross-compiled from the arm64 runner, same as termscp: macos-15-intel is a
+            # deprecated, poorly maintained image, and smb-vendored fails to link there
+            # anyway (pavao-src's vendored Samba build hits undefined libintl symbols
+            # building tdb). Ship this target without SMB; see the README note.
             build-args: "--no-default-features --features aws-s3,ftp,gcs,kube,libfuse,ssh,webdav"
           - target: x86_64-pc-windows-msvc
             os: windows-latest
