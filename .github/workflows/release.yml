@@ -187,8 +187,13 @@ jobs:
           cpanm Parse::Yapp::Driver
           brew install --cask macfuse
 
+      # macFUSE ships a universal (fat) dylib, but the `pkg-config` crate refuses to
+      # probe it at all when host and target triples differ (as on the x86_64-apple-darwin
+      # cross-build from an arm64 runner) unless cross-compilation is explicitly allowed.
       - name: Build (macOS)
         if: matrix.kind == 'macos'
+        env:
+          PKG_CONFIG_ALLOW_CROSS: "1"
         run: just build_release "$TARGET" "${{ matrix.build-args }}"
 
       # ---- Windows ----
