@@ -128,9 +128,14 @@ jobs:
           - target: aarch64-apple-darwin
             os: macos-latest
             kind: macos
+            build-args: "--features smb-vendored"
           - target: x86_64-apple-darwin
             os: macos-15-intel
             kind: macos
+            # smb-vendored fails to link on Intel macOS runners: pavao-src's vendored
+            # Samba build hits undefined libintl symbols building tdb. Ship without SMB
+            # on this target rather than the whole matrix entry; see the README note.
+            build-args: "--no-default-features --features aws-s3,ftp,gcs,kube,libfuse,ssh,webdav"
           - target: x86_64-pc-windows-msvc
             os: windows-latest
             kind: windows
@@ -183,7 +188,7 @@ jobs:
 
       - name: Build (macOS)
         if: matrix.kind == 'macos'
-        run: just build_release "$TARGET" "--features smb-vendored"
+        run: just build_release "$TARGET" "${{ matrix.build-args }}"
 
       # ---- Windows ----
       - name: Install Dokany (Windows)
@@ -378,10 +383,12 @@ jobs:
 
             on_macos do
               depends_on cask: "macfuse"
-              depends_on "gnutls"
-              depends_on "libunistring"
 
+              # The Apple Silicon build vendors Samba, which links gnutls/libunistring
+              # dynamically. The Intel build has no SMB support at all, see caveats below.
               on_arm do
+                depends_on "gnutls"
+                depends_on "libunistring"
                 url "$BASE/fusibile-v$VERSION-aarch64-apple-darwin.tar.gz"
                 sha256 "$SHA_MAC_ARM"
               end
@@ -412,6 +419,13 @@ jobs:
                   fusibile needs macFUSE. macOS will ask you to allow the system extension
                   in System Settings -> Privacy & Security the first time you mount anything.
                 CAVEATS
+                on_intel do
+                  <<~CAVEATS
+                    This build has no SMB support: vendoring Samba fails to link on Intel
+                    macOS. Build from source with "cargo install fusibile --locked" if you
+                    need it.
+                  CAVEATS
+                end
               end
               on_linux do
                 <<~CAVEATS
