@@ -275,7 +275,7 @@ where
     /// This is used to skip to a read offset on readers that only implement [`std::io::Read`]
     /// (not [`std::io::Seek`]), such as remote file streams. A malicious or misbehaving remote
     /// could otherwise cause an out-of-memory abort by reporting a huge offset.
-    fn skip_bytes(reader: &mut impl Read, n: u64) -> std::io::Result<()> {
+    fn skip_bytes(reader: &mut impl std::io::Read, n: u64) -> std::io::Result<()> {
         let skipped = std::io::copy(&mut reader.by_ref().take(n), &mut std::io::sink())?;
         if skipped != n {
             return Err(std::io::Error::new(
