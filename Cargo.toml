@@ -15,6 +15,14 @@ license = "MIT"
 repository = "https://github.com/remotefs-rs/remotefs-rs-fuse"
 rust-version = "1.94.1"
 
+[workspace.lints.rust]
+ambiguous_negative_literals = "warn"
+missing_debug_implementations = "warn"
+redundant_imports = "warn"
+redundant_lifetimes = "warn"
+unsafe_op_in_unsafe_fn = "warn"
+unused_lifetimes = "warn"
+
 [workspace.dependencies]
 anyhow = "1"
 clap = { version = "4", default-features = false }
