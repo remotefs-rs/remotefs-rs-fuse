@@ -55,7 +55,7 @@ jobs:
           echo 'user_allow_other' | sudo tee -a /etc/fuse.conf
       - name: Install macOS FUSE dependencies
         if: runner.os == 'macOS'
-        run: brew install macfuse
+        run: brew install macfuse samba pkg-config
       - name: Install Windows Dokany
         if: runner.os == 'Windows'
         run: choco install dokany -y
