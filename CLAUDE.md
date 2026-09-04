@@ -15,7 +15,7 @@ FUSE on Linux/macOS and Dokany on Windows. Two crates in one Cargo workspace:
 ## Build / lint / test
 
 ```sh
-just build "--all-features"
+just build ""                                               # workspace, default features
 just fmt_check
 just lint "-- -D warnings"
 just test "--no-fail-fast"                                  # workspace and documentation tests
@@ -33,11 +33,15 @@ Platform notes (mirrors `.github/workflows/ci.yml`):
   `--features integration-tests`.
 - **macOS**: needs `macfuse` (`brew install macfuse`). CI builds/tests with
   `--no-default-features` (no integration-tests feature — actual mounting isn't exercised in CI).
-- **Windows**: needs `dokany` (`choco install dokany`). CI runs `just build "--all-features"` then
-  the full test suite (integration tests included, no separate feature gate needed there).
+- **Windows**: needs `dokany` (`choco install dokany`). CI runs `just build ""` (default features)
+  then the full test suite (integration tests included, no separate feature gate needed there).
 
 `fusibile` pulls in one crate per backend behind a feature flag (`aws-s3`, `ftp`, `kube`,
 `smb`, `ssh`, `webdav`), all on by default; use `--no-default-features --features <subset>` to trim.
+
+`smb-vendored` builds Samba from source instead of linking the system `libsmbclient`. It is
+excluded from the `all_features` list in the `Justfile` on purpose — it takes over an hour to
+compile — and is used only by the release builds.
 
 ## Architecture
 
