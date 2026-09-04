@@ -29,3 +29,8 @@ test_bump_version:
 [group('build')]
 build_musl target:
   dist/release/build_musl.sh {{ target }}
+
+# Build a release binary for a target triple.
+[group('build')]
+build_release target features="":
+  cargo build --locked --release --target {{ target }} -p fusibile {{ features }}

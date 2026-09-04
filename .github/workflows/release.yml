@@ -17,11 +17,212 @@ permissions:
   contents: read
 
 jobs:
-  placeholder:
+  prepare:
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ inputs.version }}
+      prepared_ref: ${{ steps.prepared-ref.outputs.ref }}
     steps:
-      - name: Placeholder
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          token: ${{ secrets.RELEASE_PAT }}
+          persist-credentials: true
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Validate version
+        env:
+          VERSION: ${{ inputs.version }}
         run: |
-          echo "This is a placeholder registered on the default branch so that"
-          echo "workflow_dispatch can target other refs. The real pipeline lives"
-          echo "on the ci/automate-release branch and will replace this file."
+          if [[ ! "$VERSION" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
+            echo "invalid release version: $VERSION (expected MAJOR.MINOR.PATCH)" >&2
+            exit 2
+          fi
+
+      - name: Configure git identity
+        run: |
+          git config user.name "veeso"
+          git config user.email "christian.visintin@veeso.dev"
+
+      - name: Install git-cliff and dprint
+        uses: taiki-e/install-action@e67fa11c4b9316fa714ddf0abed07a0c3143b95b # v2.87.4
+        with:
+          tool: git-cliff,dprint
+
+      - name: Install just
+        uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3 # v4
+
+      - name: Bump version
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          dist/release/bump_version.sh "$VERSION"
+          cargo update --workspace
+
+      - name: Generate CHANGELOG
+        env:
+          VERSION: ${{ inputs.version }}
+        run: just changelog "$VERSION"
+
+      - name: Generate release notes
+        env:
+          VERSION: ${{ inputs.version }}
+        run: git-cliff --config cliff.toml --unreleased --tag "v$VERSION" --strip header -o RELEASE_NOTES.md
+
+      - name: Verify only the workspace members moved in Cargo.lock
+        run: |
+          changed=$(git diff --unified=0 -- Cargo.lock | grep -c '^[+-]version = ' || true)
+          echo "changed version lines in Cargo.lock: $changed"
+          if [ "$changed" -gt 4 ]; then
+            echo "cargo update --workspace touched more than the two member versions" >&2
+            git --no-pager diff -- Cargo.lock >&2
+            exit 1
+          fi
+
+      - name: Upload release notes
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: release-notes
+          path: RELEASE_NOTES.md
+          retention-days: 1
+          if-no-files-found: error
+
+      - name: Show diff (dry run)
+        if: ${{ inputs.dry_run }}
+        run: git --no-pager diff
+
+      - name: Commit & push version bump
+        if: ${{ !inputs.dry_run }}
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          rm -f RELEASE_NOTES.md
+          git add -A
+          git commit -m "chore: release v$VERSION"
+          git push origin HEAD:main
+
+      - name: Export prepared ref
+        id: prepared-ref
+        env:
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          if [ "$DRY_RUN" = "true" ]; then
+            echo "ref=$GITHUB_SHA" >> "$GITHUB_OUTPUT"
+          else
+            echo "ref=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          fi
+
+  build:
+    needs: prepare
+    name: build-${{ matrix.target }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: x86_64-unknown-linux-musl
+            os: ubuntu-24.04
+            kind: linux
+          - target: aarch64-unknown-linux-musl
+            os: ubuntu-24.04-arm
+            kind: linux
+          - target: aarch64-apple-darwin
+            os: macos-latest
+            kind: macos
+          - target: x86_64-apple-darwin
+            os: macos-15-intel
+            kind: macos
+          - target: x86_64-pc-windows-msvc
+            os: windows-latest
+            kind: windows
+    runs-on: ${{ matrix.os }}
+    env:
+      VERSION: ${{ needs.prepare.outputs.version }}
+      TARGET: ${{ matrix.target }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.prepare.outputs.prepared_ref }}
+          persist-credentials: false
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Prepare release version
+        shell: bash
+        run: |
+          dist/release/bump_version.sh "$VERSION"
+          cargo update --workspace
+          cargo metadata --locked --no-deps --format-version 1 > /dev/null
+
+      - name: Install just
+        uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3 # v4
+
+      - name: Install Rust target
+        if: matrix.kind == 'macos'
+        run: rustup target add "$TARGET"
+
+      - name: Install Rust target
+        if: matrix.kind == 'windows'
+        run: rustup target add "$env:TARGET"
+
+      # ---- Linux: static musl build in a pinned Alpine container ----
+      - name: Build (Linux)
+        if: matrix.kind == 'linux'
+        run: just build_musl "$TARGET"
+
+      # ---- macOS ----
+      - name: Install deps (macOS)
+        if: matrix.kind == 'macos'
+        run: |
+          brew update
+          brew install bison cpanminus cups flex gettext gmp gnutls icu4c jansson \
+            libarchive libbsd libunistring libgit2 libtirpc openldap pkg-config zlib
+          for p in bison cups flex gettext gmp gnutls icu4c jansson libarchive \
+            libbsd libgit2 libtirpc libunistring openldap zlib; do brew link --force "$p"; done
+          cpanm Parse::Yapp::Driver
+          brew install --cask macfuse
+
+      - name: Build (macOS)
+        if: matrix.kind == 'macos'
+        run: just build_release "$TARGET" "--features smb-vendored"
+
+      # ---- Windows ----
+      - name: Install Dokany (Windows)
+        if: matrix.kind == 'windows'
+        run: choco install dokany -y
+
+      # Windows uses WNetSmbFs (Win32 WNet API), which needs no external library.
+      # `smb-vendored` forwards to remotefs-smb/vendored -> pavao, which is declared
+      # under [target.'cfg(target_family = "unix")'.dependencies] and is therefore a
+      # silent no-op here. Do not pass it.
+      - name: Build (Windows)
+        if: matrix.kind == 'windows'
+        run: just build_release "$env:TARGET"
+
+      # ---- Package posix (tar.gz) ----
+      - name: Package (posix)
+        if: matrix.kind != 'windows'
+        run: |
+          mkdir -p artifact
+          cp "target/$TARGET/release/fusibile" artifact/fusibile
+          tar -czf "artifact/fusibile-v$VERSION-$TARGET.tar.gz" -C artifact fusibile
+          shasum -a 256 "artifact/fusibile-v$VERSION-$TARGET.tar.gz" | awk '{print $1}' > "artifact/$TARGET.sha256"
+          rm artifact/fusibile
+
+      # ---- Package windows (zip) ----
+      - name: Package (windows)
+        if: matrix.kind == 'windows'
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force artifact | Out-Null
+          Copy-Item "target/$env:TARGET/release/fusibile.exe" artifact/fusibile.exe
+          Compress-Archive -Path artifact/fusibile.exe -DestinationPath "artifact/fusibile-v$env:VERSION-$env:TARGET.zip"
+          (Get-FileHash "artifact/fusibile-v$env:VERSION-$env:TARGET.zip" -Algorithm SHA256).Hash.ToLower() | Out-File -NoNewline "artifact/$env:TARGET.sha256"
+          Remove-Item artifact/fusibile.exe
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: build-${{ matrix.target }}
+          path: artifact/*
+          retention-days: 1
+          if-no-files-found: error
