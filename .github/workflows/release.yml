@@ -1,0 +1,27 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to release, e.g. 1.1.0 (no leading v)"
+        required: true
+        type: string
+      dry_run:
+        description: "Dry run: build & compute everything, push/publish nothing"
+        required: true
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  placeholder:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Placeholder
+        run: |
+          echo "This is a placeholder registered on the default branch so that"
+          echo "workflow_dispatch can target other refs. The real pipeline lives"
+          echo "on the ci/automate-release branch and will replace this file."
