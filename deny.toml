@@ -11,14 +11,6 @@ db-urls = ["https://github.com/rustsec/advisory-db"]
 yanked = "deny"
 unmaintained = "all"
 ignore = [
-  # h2 0.3 is required by reqwest 0.11, which is pulled in by the published
-  # remotefs-webdav 0.2 backend. The fixed h2 release is a breaking upgrade.
-  { id = "RUSTSEC-2026-0258", reason = "transitive h2 0.3 dependency through remotefs-webdav; no compatible backend upgrade" },
-  # quick-xml 0.30 and 0.31 are required by the published remotefs-aws-s3
-  # and remotefs-webdav backends. The fixed quick-xml release is a breaking
-  # upgrade that those backend versions do not support.
-  { id = "RUSTSEC-2026-0194", reason = "transitive quick-xml dependency through pinned remotefs backends" },
-  { id = "RUSTSEC-2026-0195", reason = "transitive quick-xml dependency through pinned remotefs backends" },
   # rustls-pemfile is unmaintained and the advisory provides no safe upgrade;
   # it remains transitive through the pinned WebDAV and Kubernetes backends.
   { id = "RUSTSEC-2025-0134", reason = "no safe upgrade is available; transitive through pinned remotefs backends" },
