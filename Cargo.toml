@@ -41,7 +41,7 @@ pretty_assertions = "1"
 remotefs = "0.3"
 remotefs-aws-s3 = "0.4"
 remotefs-ftp = "0.4"
-remotefs-fuse = { version = "0.3", path = "crates/remotefs-fuse" }
+remotefs-fuse = { version = "0.3.0", path = "crates/remotefs-fuse" }
 remotefs-gcs = "0.1"
 remotefs-kube = "0.4"
 remotefs-memory = "0.1"

@@ -2,6 +2,31 @@
 
 All notable changes to this project are documented in this file.
 
+## 0.3.0
+
+Released on 2026-09-08
+
+### Added
+
+- **webdav:** support bearer token authentication for webdav mounts (#10)
+
+> - feat(webdav): support bearer token authentication for webdav mounts
+>
+> Bump remotefs-webdav to 0.3, which adds an Auth enum covering basic
+> and bearer-token authentication. Drop now-resolved RUSTSEC advisories
+> from deny.toml and bump the pinned toolchain to 1.98.1.
+>
+> - chore: release 0.3.0
+
+### Fixed
+
+- **ci:** drop unsupported cask dependency from generated formula
+
+> Homebrew removed depends_on cask:, which broke tapping and
+> installing fusibile. Point users at brew install --cask macfuse
+> via caveats instead. Mirrors the fix already applied directly to
+> the homebrew-fusibile tap.
+
 ## 0.2.0
 
 Released on 2026-09-04
