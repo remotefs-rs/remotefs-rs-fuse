@@ -6,7 +6,7 @@ members = [
 resolver = "3"
 
 [workspace.package]
-version = "0.3.0"
+version = "1.0.0"
 authors = ["Christian Visintin <christian.visintin@veeso.dev>"]
 categories = ["network-programming"]
 edition = "2024"
@@ -25,29 +25,30 @@ unused_lifetimes = "warn"
 
 [workspace.dependencies]
 anyhow = "1"
+async-trait = "0.1"
 clap = { version = "4", default-features = false }
-ctrlc = "3"
 dashmap = "6"
 dirs = "7"
 dokan = "0.3"
 dokan-sys = "0.3"
 env_logger = "0.11"
 fuser = "0.18"
+futures-util = { version = "0.3", default-features = false }
 libc = "0.2"
 log = "0.4"
 nix = "0.31"
 path-slash = "0.2"
 pretty_assertions = "1"
-remotefs = "0.3"
-remotefs-aws-s3 = "0.4"
-remotefs-ftp = "0.4"
-remotefs-fuse = { version = "0.3.0", path = "crates/remotefs-fuse" }
-remotefs-gcs = "0.1"
-remotefs-kube = "0.4"
-remotefs-memory = "0.1"
-remotefs-smb = { version = "0.5", default-features = false }
-remotefs-ssh = { version = "0.9", default-features = false }
-remotefs-webdav = "0.3"
+remotefs = "1"
+remotefs-aws-s3 = "1"
+remotefs-ftp = "1"
+remotefs-fuse = { version = "1", path = "crates/remotefs-fuse" }
+remotefs-gcs = "1"
+remotefs-kube = "1"
+remotefs-memory = "1"
+remotefs-smb = { version = "1", default-features = false }
+remotefs-ssh = { version = "1", default-features = false }
+remotefs-webdav = "1"
 seahash = "4"
 serde_json = "1"
 serial_test = "4"

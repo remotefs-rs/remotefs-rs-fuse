@@ -11,9 +11,6 @@ db-urls = ["https://github.com/rustsec/advisory-db"]
 yanked = "deny"
 unmaintained = "all"
 ignore = [
-  # rustls-pemfile is unmaintained and the advisory provides no safe upgrade;
-  # it remains transitive through the pinned WebDAV and Kubernetes backends.
-  { id = "RUSTSEC-2025-0134", reason = "no safe upgrade is available; transitive through pinned remotefs backends" },
   # russh vulnerability; patch is undergoing work and is not yet released.
   { id = "RUSTSEC-2023-0071", reason = "transitive russh dependency through pinned remotefs backends; no safe upgrade is available" },
 ]
@@ -37,12 +34,6 @@ allow = [
   "Zlib",
 ]
 confidence-threshold = 0.8
-
-# The optional WebDAV CLI backend uses rustydav, whose published crate is
-# GPL-3.0-only. Keep this exception scoped to that one transitive crate.
-[[licenses.exceptions]]
-allow = ["GPL-3.0"]
-name = "rustydav"
 
 [licenses.private]
 ignore = false
