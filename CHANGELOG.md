@@ -2,6 +2,36 @@
 
 All notable changes to this project are documented in this file.
 
+## 1.0.0
+
+Released on 2026-09-16
+
+### Breaking changes
+
+- migrate to remotefs 1
+
+> Mount and Driver now require remotefs 1.x APIs. Add AsyncMount and AsyncUnmount behind the tokio feature and remove the previous Mount::mount_async API. fusibile now requires async-capable backend implementations and no longer exposes the old synchronous RemoteFsWrapper.
+
+### Added
+
+- Breaking: migrate to remotefs 1
+
+> Migrate remotefs-fuse's synchronous drivers to remotefs 1 and extract shared transfer and platform state modules used by native async Unix and Windows drivers.
+>
+> Add tokio-gated AsyncMount and AsyncUnmount. Unix FUSE callbacks spawn runtime tasks, while Windows Dokany callbacks await through the runtime handle at the callback boundary.
+>
+> Make fusibile a Tokio application using AsyncRemoteFs backends, Unblock for memory and SMB, and signal-driven unmount coordination.
+>
+> Add futures-util and async test support, remove ctrlc and the blocking backend wrapper, and update backend dependencies to remotefs 1.
+
+- make `password`, `username`, and `port` arguments for ssh optionals
+
+> if these arguments are missing, they are inferred from the ssh config matching the host. Port fallbacks to `22` if unresolved
+
+### Fixed
+
+- show better error for macfuse issues
+
 ## 0.3.0
 
 Released on 2026-09-08
