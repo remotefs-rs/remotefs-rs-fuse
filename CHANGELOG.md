@@ -2,6 +2,14 @@
 
 All notable changes to this project are documented in this file.
 
+## 1.0.1
+
+Released on 2026-09-22
+
+### Fixed
+
+- apply uid and gid overrides to file attributes
+
 ## 1.0.0
 
 Released on 2026-09-16

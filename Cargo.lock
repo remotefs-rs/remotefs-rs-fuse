@@ -1792,7 +1792,7 @@ dependencies = [
 
 [[package]]
 name = "fusibile"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "anyhow",
  "clap",
@@ -4211,7 +4211,7 @@ dependencies = [
 
 [[package]]
 name = "remotefs-fuse"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "async-trait",
  "dashmap",
