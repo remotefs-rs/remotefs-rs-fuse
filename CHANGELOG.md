@@ -8,7 +8,11 @@ Released on 2026-09-22
 
 ### Fixed
 
-- apply uid and gid overrides to file attributes
+- apply uid and gid overrides to file attributes (#13)
+
+> - test: correct uid and gid fixture callbacks
+> - fix: apply uid and gid overrides to file attributes
+> - chore: release 1.0.1
 
 ## 1.0.0
 
